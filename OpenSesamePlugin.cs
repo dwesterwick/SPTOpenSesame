@@ -18,9 +18,6 @@ namespace SPTOpenSesame
 
             new Patches.DoorInteractionPatch().Enable();
 
-            // Add options to the F12 menu
-            SPTOpenSesamePluginConfig.BuildConfigOptions(Config);
-
             Logger.LogInfo("Loading OpenSesame...done.");
         }
     }
