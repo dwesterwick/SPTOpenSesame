@@ -10,9 +10,16 @@ using HarmonyLib;
 
 namespace SPTOpenSesame
 {
-    [BepInPlugin("com.DanW.OpenSesame", "DanW-OpenSesame", "1.1.0")]
+    [BepInPlugin("com.DanW.OpenSesame", "DanW-OpenSesame", "2.0.0")]
     public class OpenSesamePlugin : BaseUnityPlugin
     {
+        public static string[] PowerSwitchIds = new string[]
+        {
+            "custom_DesignStuff_00034",
+            "Shopping_Mall_DesignStuff_00055"
+        };
+
+        public static ConfigEntry<bool> AddNewActions;
         public static ConfigEntry<bool> WriteMessagesForAllDoors;
         public static ConfigEntry<bool> WriteMessagesWhenUnlockingDoors;
         public static ConfigEntry<bool> WriteMessagesWhenTogglingSwitches;
@@ -33,10 +40,10 @@ namespace SPTOpenSesame
 
             new Patches.OnGameStartedPatch().Enable();
             new Patches.GameWorldOnDestroyPatch().Enable();
-            new Patches.NoPowerTipInteractionPatch().Enable();
-            new Patches.DoorInteractionPatch().Enable();
+            new Patches.InteractiveObjectInteractionPatch().Enable();
             new Patches.KeycardDoorInteractionPatch().Enable();
-
+            new Patches.NoPowerTipInteractionPatch().Enable();
+            
             addConfigOptions();
 
             Logger.LogInfo("Loading OpenSesame...done.");
@@ -44,6 +51,9 @@ namespace SPTOpenSesame
 
         private void addConfigOptions()
         {
+            AddNewActions = Config.Bind("Main", "Add new actions to menus",
+                true, "Add \"OpenSesame\" and \"Turn On Power\" actions to context menus where applicable");
+
             WriteMessagesForAllDoors = Config.Bind("Main", "Write messages for all doors",
                 false, "Write a debug message to the game console when the context menu for doors is displayed");
 

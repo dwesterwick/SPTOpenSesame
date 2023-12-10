@@ -76,7 +76,7 @@
   <ItemGroup>
     <Compile Include="Helpers\InteractionHelpers.cs" />
     <Compile Include="Helpers\LoggingUtil.cs" />
-    <Compile Include="Patches\DoorInteractionPatch.cs" />
+    <Compile Include="Patches\InteractiveObjectInteractionPatch.cs" />
     <Compile Include="Patches\GameWorldOnDestroyPatch.cs" />
     <Compile Include="Patches\KeycardDoorInteractionPatch.cs" />
     <Compile Include="Patches\NoPowerTipInteractionPatch.cs" />
@@ -84,6 +84,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OpenSesamePlugin.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="LICENSE.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

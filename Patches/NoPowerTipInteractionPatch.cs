@@ -21,6 +21,11 @@ namespace SPTOpenSesame.Patches
         [PatchPostfix]
         private static void PatchPostfix(ref object __result, NoPowerTip noPowerTip)
         {
+            if (!OpenSesamePlugin.AddNewActions.Value)
+            {
+                return;
+            }
+
             // Try to add the "Turn On Power" action to the doors's context menu
             OpenSesamePlugin.PowerSwitch.addTurnOnPowerToActionList(__result);
         }

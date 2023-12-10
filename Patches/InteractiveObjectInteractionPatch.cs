@@ -12,15 +12,15 @@ using SPTOpenSesame.Helpers;
 
 namespace SPTOpenSesame.Patches
 {
-    public class DoorInteractionPatch : ModulePatch
+    public class InteractiveObjectInteractionPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {
-            return OpenSesamePlugin.TargetType.GetMethod("smethod_9", BindingFlags.NonPublic | BindingFlags.Static);
+            return OpenSesamePlugin.TargetType.GetMethod("smethod_2", BindingFlags.NonPublic | BindingFlags.Static);
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(ref object __result, GamePlayerOwner owner, Door door)
+        private static void PatchPostfix(ref object __result, GamePlayerOwner owner, WorldInteractiveObject worldInteractiveObject)
         {
             // Ignore interactions from bots
             if (InteractionHelpers.isInteractorABot(owner))
@@ -30,11 +30,16 @@ namespace SPTOpenSesame.Patches
 
             if (OpenSesamePlugin.WriteMessagesForAllDoors.Value)
             {
-                LoggingUtil.LogInfo("Checking available actions for door: " + door.Id + "...");
+                LoggingUtil.LogInfo("Checking available actions for object " + worldInteractiveObject.Id + "...");
+            }
+
+            if (!OpenSesamePlugin.AddNewActions.Value)
+            {
+                return;
             }
 
             // Try to add the "Open Sesame" action to the door's context menu
-            door.addOpenSesameToActionList(__result, owner);
+            worldInteractiveObject.addOpenSesameToActionList(__result, owner);
         }
     }
 }

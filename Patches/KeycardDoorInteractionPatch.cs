@@ -32,6 +32,11 @@ namespace SPTOpenSesame.Patches
                 LoggingUtil.LogInfo("Checking available actions for door: " + door.Id + "...");
             }
 
+            if (!OpenSesamePlugin.AddNewActions.Value)
+            {
+                return;
+            }
+
             // Try to add the "Open Sesame" action to the door's context menu
             door.addOpenSesameToActionList(__result, owner);
         }
