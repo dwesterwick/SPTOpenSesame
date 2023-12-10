@@ -25,6 +25,8 @@ namespace SPTOpenSesame
             findTypes();
 
             new Patches.DoorInteractionPatch().Enable();
+            new Patches.OnGameStartedPatch().Enable();
+            new Patches.GameWorldOnDestroyPatch().Enable();
 
             addConfigOptions();
 

@@ -76,6 +76,8 @@
   <ItemGroup>
     <Compile Include="LoggingController.cs" />
     <Compile Include="Patches\DoorInteractionPatch.cs" />
+    <Compile Include="Patches\GameWorldOnDestroyPatch.cs" />
+    <Compile Include="Patches\OnGameStartedPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OpenSesamePlugin.cs" />
   </ItemGroup>
