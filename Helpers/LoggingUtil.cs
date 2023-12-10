@@ -1,6 +1,6 @@
-﻿namespace SPTOpenSesame
+﻿namespace SPTOpenSesame.Helpers
 {
-    public static class LoggingController
+    public static class LoggingUtil
     {
         public static BepInEx.Logging.ManualLogSource Logger { get; set; } = null;
 

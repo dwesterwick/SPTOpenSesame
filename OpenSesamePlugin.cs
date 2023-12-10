@@ -27,14 +27,15 @@ namespace SPTOpenSesame
         {
             Logger.LogInfo("Loading OpenSesame...");
 
-            LoggingController.Logger = Logger;
+            Helpers.LoggingUtil.Logger = Logger;
 
             findTypes();
 
-            new Patches.DoorInteractionPatch().Enable();
             new Patches.OnGameStartedPatch().Enable();
             new Patches.GameWorldOnDestroyPatch().Enable();
             new Patches.NoPowerTipInteractionPatch().Enable();
+            new Patches.DoorInteractionPatch().Enable();
+            new Patches.KeycardDoorInteractionPatch().Enable();
 
             addConfigOptions();
 
@@ -62,13 +63,13 @@ namespace SPTOpenSesame
             }
 
             TargetType = targetTypeOptions[0];
-            LoggingController.LogInfo("Target type: " + TargetType);
+            Helpers.LoggingUtil.LogInfo("Target type: " + TargetType);
             
             ResultType = AccessTools.FirstMethod(TargetType, m => m.Name.Contains("GetAvailableActions")).ReturnType;
-            LoggingController.LogInfo("Return type: " + ResultType.FullName);
+            Helpers.LoggingUtil.LogInfo("Return type: " + ResultType.FullName);
 
             ActionType = AccessTools.Field(ResultType, "SelectedAction").FieldType;
-            LoggingController.LogInfo("Action type: " + ActionType.FullName);
+            Helpers.LoggingUtil.LogInfo("Action type: " + ActionType.FullName);
         }
     }
 }

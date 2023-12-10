@@ -29,7 +29,7 @@ namespace SPTOpenSesame.Patches
             Switch[] powerSwitches = UnityEngine.Object.FindObjectsOfType<Switch>().Where(s => powerSwitchIds.Contains(s.Id)).ToArray();
             foreach (Switch powerSwitch in powerSwitches)
             {
-                LoggingController.LogInfo("Found power switch " + powerSwitch.Id);
+                Helpers.LoggingUtil.LogInfo("Found power switch " + powerSwitch.Id);
                 OpenSesamePlugin.PowerSwitch = powerSwitch;
             }
         }

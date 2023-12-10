@@ -1,26 +1,25 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Aki.Reflection.Patching;
-using EFT;
 using EFT.Interactive;
+using EFT;
 using SPTOpenSesame.Helpers;
 
 namespace SPTOpenSesame.Patches
 {
-    public class DoorInteractionPatch : ModulePatch
+    public class KeycardDoorInteractionPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {
-            return OpenSesamePlugin.TargetType.GetMethod("smethod_9", BindingFlags.NonPublic | BindingFlags.Static);
+            return OpenSesamePlugin.TargetType.GetMethod("smethod_8", BindingFlags.NonPublic | BindingFlags.Static);
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(ref object __result, GamePlayerOwner owner, Door door)
+        private static void PatchPostfix(ref object __result, GamePlayerOwner owner, KeycardDoor door, bool isProxy)
         {
             // Ignore interactions from bots
             if (InteractionHelpers.isInteractorABot(owner))
