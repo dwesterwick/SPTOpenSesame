@@ -10,11 +10,18 @@ using HarmonyLib;
 
 namespace SPTOpenSesame
 {
-    [BepInPlugin("com.DanW.OpenSesame", "DanW-OpenSesame", "1.0.0")]
+    [BepInPlugin("com.DanW.OpenSesame", "DanW-OpenSesame", "1.1.0")]
     public class OpenSesamePlugin : BaseUnityPlugin
     {
         public static ConfigEntry<bool> WriteMessagesForAllDoors;
         public static ConfigEntry<bool> WriteMessagesWhenUnlockingDoors;
+        public static ConfigEntry<bool> WriteMessagesWhenTogglingSwitches;
+
+        public static Type TargetType { get; set; } = null;
+        public static Type ResultType { get; set; } = null;
+        public static Type ActionType { get; set; } = null;
+
+        public static EFT.Interactive.Switch PowerSwitch { get; set; } = null;
 
         private void Awake()
         {
@@ -27,6 +34,7 @@ namespace SPTOpenSesame
             new Patches.DoorInteractionPatch().Enable();
             new Patches.OnGameStartedPatch().Enable();
             new Patches.GameWorldOnDestroyPatch().Enable();
+            new Patches.NoPowerTipInteractionPatch().Enable();
 
             addConfigOptions();
 
@@ -40,6 +48,9 @@ namespace SPTOpenSesame
 
             WriteMessagesWhenUnlockingDoors = Config.Bind("Main", "Write messages when unlocking doors",
                 false, "Write a debug message to the game console when you use this mod to unlock a door");
+
+            WriteMessagesWhenTogglingSwitches = Config.Bind("Main", "Write messages when toggling switches",
+                false, "Write a debug message to the game console when you toggle a switch");
         }
 
         private void findTypes()
@@ -50,14 +61,14 @@ namespace SPTOpenSesame
                 throw new TypeLoadException("Cannot find target method");
             }
 
-            Patches.DoorInteractionPatch.TargetType = targetTypeOptions[0];
-            LoggingController.LogInfo("Target type: " + Patches.DoorInteractionPatch.TargetType);
+            TargetType = targetTypeOptions[0];
+            LoggingController.LogInfo("Target type: " + TargetType);
             
-            Patches.DoorInteractionPatch.ResultType = AccessTools.FirstMethod(Patches.DoorInteractionPatch.TargetType, m => m.Name.Contains("GetAvailableActions")).ReturnType;
-            LoggingController.LogInfo("Return type: " + Patches.DoorInteractionPatch.ResultType.FullName);
+            ResultType = AccessTools.FirstMethod(TargetType, m => m.Name.Contains("GetAvailableActions")).ReturnType;
+            LoggingController.LogInfo("Return type: " + ResultType.FullName);
 
-            Patches.DoorInteractionPatch.ActionType = AccessTools.Field(Patches.DoorInteractionPatch.ResultType, "SelectedAction").FieldType;
-            LoggingController.LogInfo("Action type: " + Patches.DoorInteractionPatch.ActionType.FullName);
+            ActionType = AccessTools.Field(ResultType, "SelectedAction").FieldType;
+            LoggingController.LogInfo("Action type: " + ActionType.FullName);
         }
     }
 }

@@ -15,13 +15,9 @@ namespace SPTOpenSesame.Patches
 {
     public class DoorInteractionPatch : ModulePatch
     {
-        public static Type TargetType { get; set; } = null;
-        public static Type ResultType { get; set; } = null;
-        public static Type ActionType { get; set; } = null;
-
         protected override MethodBase GetTargetMethod()
         {
-            return TargetType.GetMethod("smethod_9", BindingFlags.NonPublic | BindingFlags.Static);
+            return OpenSesamePlugin.TargetType.GetMethod("smethod_9", BindingFlags.NonPublic | BindingFlags.Static);
         }
 
         [PatchPostfix]
@@ -45,17 +41,17 @@ namespace SPTOpenSesame.Patches
             }
 
             // Create a new action to unlock the door
-            var newAction = Activator.CreateInstance(ActionType);
+            var newAction = Activator.CreateInstance(OpenSesamePlugin.ActionType);
 
-            AccessTools.Field(ActionType, "Name").SetValue(newAction, "Open Sesame");
+            AccessTools.Field(OpenSesamePlugin.ActionType, "Name").SetValue(newAction, "Open Sesame");
 
             UnlockActionWrapper unlockActionWrapper = new UnlockActionWrapper(owner, door);
-            AccessTools.Field(ActionType, "Action").SetValue(newAction, new Action(unlockActionWrapper.unlockAction));
+            AccessTools.Field(OpenSesamePlugin.ActionType, "Action").SetValue(newAction, new Action(unlockActionWrapper.unlockAction));
 
-            AccessTools.Field(ActionType, "Disabled").SetValue(newAction, !door.Operatable);
+            AccessTools.Field(OpenSesamePlugin.ActionType, "Disabled").SetValue(newAction, !door.Operatable);
 
             // Add the new action to the context menu for the door
-            IList actionList = (IList)AccessTools.Field(ResultType, "Actions").GetValue(__result);
+            IList actionList = (IList)AccessTools.Field(OpenSesamePlugin.ResultType, "Actions").GetValue(__result);
             actionList.Add(newAction);
         }
     }

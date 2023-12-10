@@ -12,6 +12,12 @@ namespace SPTOpenSesame.Patches
 {
     public class OnGameStartedPatch: ModulePatch
     {
+        private static string[] powerSwitchIds = new string[]
+        {
+            "custom_DesignStuff_00034",
+            "Shopping_Mall_DesignStuff_00055"
+        };
+
         protected override MethodBase GetTargetMethod()
         {
             return typeof(GameWorld).GetMethod("OnGameStarted", BindingFlags.Public | BindingFlags.Instance);
@@ -20,19 +26,11 @@ namespace SPTOpenSesame.Patches
         [PatchPostfix]
         private static void PatchPostfix(GameWorld __instance)
         {
-            InteractiveSubscriber[] allSubscribers = UnityEngine.Object.FindObjectsOfType<InteractiveSubscriber>();
-            foreach (InteractiveSubscriber subscribers in allSubscribers)
+            Switch[] powerSwitches = UnityEngine.Object.FindObjectsOfType<Switch>().Where(s => powerSwitchIds.Contains(s.Id)).ToArray();
+            foreach (Switch powerSwitch in powerSwitches)
             {
-                Switch sw = subscribers.Subscribee as Switch;
-                if (sw == null)
-                {
-                    continue;
-                }
-
-                if (sw.ContextMenuTip.Localized().ToLower().Contains("restore power supply"))
-                {
-                    LoggingController.LogInfo("Found power switch " + sw.Id);
-                }
+                LoggingController.LogInfo("Found power switch " + powerSwitch.Id);
+                OpenSesamePlugin.PowerSwitch = powerSwitch;
             }
         }
     }
