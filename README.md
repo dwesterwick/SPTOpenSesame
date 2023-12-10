@@ -4,6 +4,8 @@ This mod will add a new action called "Open Sesame" to their context menus to al
 
 It also adds a "Turn On Power" action to doors that require the map's power switch to be turned on before they can be unlocked.
 
+To prevent you from accidentally unlocking things, a "Do Nothing" action is added first (so it's the default action). This can be disabled in the Configuration Manager.
+
 You can enable options in the Configuration Manager to write debug messages when the context menu opens or when you select the "Open Sesame" or "Turn on Power" actions. Enabling these will allow you to see the door ID (when the context menu opens), key ID (when you unlock a door via the "Open Sesame" action), or switch ID (when you turn on the power switch).
 
 You can also prevent this mod from adding actions to context menus via a Configuration Manager option.

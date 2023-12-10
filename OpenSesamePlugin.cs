@@ -20,6 +20,7 @@ namespace SPTOpenSesame
         };
 
         public static ConfigEntry<bool> AddNewActions;
+        public static ConfigEntry<bool> AddDoNothingAction;
         public static ConfigEntry<bool> WriteMessagesForAllDoors;
         public static ConfigEntry<bool> WriteMessagesWhenUnlockingDoors;
         public static ConfigEntry<bool> WriteMessagesWhenTogglingSwitches;
@@ -52,15 +53,18 @@ namespace SPTOpenSesame
         private void addConfigOptions()
         {
             AddNewActions = Config.Bind("Main", "Add new actions to menus",
-                true, "Add \"OpenSesame\" and \"Turn On Power\" actions to context menus where applicable");
+                true, "Adds new actions to context menus where applicable");
 
-            WriteMessagesForAllDoors = Config.Bind("Main", "Write messages for all doors",
+            AddDoNothingAction = Config.Bind("Main", "Add Do-Nothing action to menus",
+                true, "Adds the \"Do Nothing\" action to context menus where applicable so you don't accidentally unlock things");
+
+            WriteMessagesForAllDoors = Config.Bind("Logging", "Write messages for all doors",
                 false, "Write a debug message to the game console when the context menu for doors is displayed");
 
-            WriteMessagesWhenUnlockingDoors = Config.Bind("Main", "Write messages when unlocking doors",
+            WriteMessagesWhenUnlockingDoors = Config.Bind("Logging", "Write messages when unlocking doors",
                 false, "Write a debug message to the game console when you use this mod to unlock a door");
 
-            WriteMessagesWhenTogglingSwitches = Config.Bind("Main", "Write messages when toggling switches",
+            WriteMessagesWhenTogglingSwitches = Config.Bind("Logging", "Write messages when toggling switches",
                 false, "Write a debug message to the game console when you toggle a switch");
         }
 

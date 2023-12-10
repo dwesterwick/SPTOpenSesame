@@ -8,6 +8,7 @@ using EFT;
 using HarmonyLib;
 using System.Collections;
 using Comfort.Common;
+using EFT.UI.Ragfair;
 
 namespace SPTOpenSesame.Helpers
 {
@@ -38,6 +39,28 @@ namespace SPTOpenSesame.Helpers
             return true;
         }
 
+        public static void addDoNothingToActionList(object actionListObject)
+        {
+            if (!OpenSesamePlugin.AddDoNothingAction.Value)
+            {
+                return;
+            }
+
+            // Create a new action to do nothing
+            var newAction = Activator.CreateInstance(OpenSesamePlugin.ActionType);
+
+            AccessTools.Field(OpenSesamePlugin.ActionType, "Name").SetValue(newAction, "Do Nothing");
+
+            InteractiveObjectInteractionWrapper unlockActionWrapper = new InteractiveObjectInteractionWrapper();
+            AccessTools.Field(OpenSesamePlugin.ActionType, "Action").SetValue(newAction, new Action(unlockActionWrapper.doNothingAction));
+
+            AccessTools.Field(OpenSesamePlugin.ActionType, "Disabled").SetValue(newAction, false);
+
+            // Add the new action to the context menu for the door
+            IList actionList = (IList)AccessTools.Field(OpenSesamePlugin.ResultType, "Actions").GetValue(actionListObject);
+            actionList.Add(newAction);
+        }
+
         public static void addOpenSesameToActionList(this WorldInteractiveObject interactiveObject, object actionListObject, GamePlayerOwner owner)
         {
             // Don't do anything else unless the door is locked and requires a key
@@ -45,6 +68,9 @@ namespace SPTOpenSesame.Helpers
             {
                 return;
             }
+
+            // Add "Do Nothing" to the action list as the default selection
+            addDoNothingToActionList(actionListObject);
 
             // Create a new action to unlock the door
             var newAction = Activator.CreateInstance(OpenSesamePlugin.ActionType);
@@ -63,6 +89,9 @@ namespace SPTOpenSesame.Helpers
 
         public static void addTurnOnPowerToActionList(this WorldInteractiveObject interactiveObject, object actionListObject)
         {
+            // Add "Do Nothing" to the action list as the default selection
+            addDoNothingToActionList(actionListObject);
+
             // Create a new action to turn on the power switch
             var newAction = Activator.CreateInstance(OpenSesamePlugin.ActionType);
 
@@ -83,7 +112,12 @@ namespace SPTOpenSesame.Helpers
             public GamePlayerOwner owner;
             public WorldInteractiveObject interactiveObject;
 
-            public InteractiveObjectInteractionWrapper(WorldInteractiveObject _interactiveObject)
+            public InteractiveObjectInteractionWrapper()
+            {
+
+            }
+
+            public InteractiveObjectInteractionWrapper(WorldInteractiveObject _interactiveObject) : this()
             {
                 interactiveObject = _interactiveObject;
             }
@@ -91,6 +125,11 @@ namespace SPTOpenSesame.Helpers
             public InteractiveObjectInteractionWrapper(WorldInteractiveObject _interactiveObject, GamePlayerOwner _owner) : this(_interactiveObject)
             {
                 owner = _owner;
+            }
+
+            internal void doNothingAction()
+            {
+                LoggingUtil.LogInfo("Nothing happened. What did you expect...?");
             }
 
             internal void unlockAndOpenAction()
