@@ -109,12 +109,23 @@ namespace SPTOpenSesame.Helpers
 
                 if (OpenSesamePlugin.WriteMessagesWhenUnlockingDoors.Value)
                 {
-                    LoggingUtil.LogInfo("Unlocking and opening interactive object " + interactiveObject.Id + " which requires key " + interactiveObject.KeyId + "...");
+                    LoggingUtil.LogInfo("Unlocking interactive object " + interactiveObject.Id + " which requires key " + interactiveObject.KeyId + "...");
                 }
 
                 // Unlock the door
                 interactiveObject.DoorState = EDoorState.Shut;
                 interactiveObject.OnEnable();
+
+                // Do not open lootable containers like safes, cash registers, etc.
+                if ((interactiveObject as LootableContainer) != null)
+                {
+                    return;
+                }
+
+                if (OpenSesamePlugin.WriteMessagesWhenUnlockingDoors.Value)
+                {
+                    LoggingUtil.LogInfo("Opening interactive object " + interactiveObject.Id + "...");
+                }
 
                 owner.Player.MovementContext.ResetCanUsePropState();
 

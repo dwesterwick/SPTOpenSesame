@@ -9,6 +9,3 @@ You can enable options in the Configuration Manager to write debug messages when
 You can also prevent this mod from adding actions to context menus via a Configuration Manager option.
 
 I wrote this to be agnostic of the SPT/EFT version, so you should rarely (if ever) have to update it.
-
-Known Issues:
-* If you unlock a lootable container (cash register, safe, etc.), it will first open the container without searching it. To search it, close the container and hover over it again.
