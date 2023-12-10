@@ -43,7 +43,7 @@ namespace SPTOpenSesame
         private void findTypes()
         {
             Type[] targetTypeOptions = Aki.Reflection.Utils.PatchConstants.EftTypes.Where(t => t.GetMethods().Any(m => m.Name.Contains("GetAvailableActions"))).ToArray();
-            if ((targetTypeOptions.Length < 1) || (targetTypeOptions.Length > 2))
+            if (targetTypeOptions.Length != 1)
             {
                 throw new TypeLoadException("Cannot find target method");
             }
@@ -51,13 +51,7 @@ namespace SPTOpenSesame
             Patches.DoorInteractionPatch.TargetType = targetTypeOptions[0];
             LoggingController.LogInfo("Target type: " + Patches.DoorInteractionPatch.TargetType);
             
-            MethodInfo[] targetMethodOptions = Patches.DoorInteractionPatch.TargetType.GetMethods().Where(m => m.Name.Contains("GetAvailableActions")).ToArray();
-            if ((targetTypeOptions.Length < 1) || (targetTypeOptions.Length > 2))
-            {
-                throw new TypeLoadException("Cannot find return type");
-            }
-
-            Patches.DoorInteractionPatch.ResultType = targetMethodOptions[0].ReturnType;
+            Patches.DoorInteractionPatch.ResultType = AccessTools.FirstMethod(Patches.DoorInteractionPatch.TargetType, m => m.Name.Contains("GetAvailableActions")).ReturnType;
             LoggingController.LogInfo("Return type: " + Patches.DoorInteractionPatch.ResultType.FullName);
 
             Patches.DoorInteractionPatch.ActionType = AccessTools.Field(Patches.DoorInteractionPatch.ResultType, "SelectedAction").FieldType;
