@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
+using SPTOpenSesame.Helpers;
 
 namespace SPTOpenSesame
 {
@@ -19,6 +16,7 @@ namespace SPTOpenSesame
             "Shopping_Mall_DesignStuff_00055"
         };
 
+        public static ConfigEntry<Language> NewActionsLanguage;
         public static ConfigEntry<bool> AddNewActions;
         public static ConfigEntry<bool> AddDoNothingAction;
         public static ConfigEntry<bool> WriteMessagesForAllDoors;
@@ -52,6 +50,9 @@ namespace SPTOpenSesame
 
         private void addConfigOptions()
         {
+            NewActionsLanguage = Config.Bind("Main", "Actions Language", Language.English,
+                "The display text of new actions");
+            
             AddNewActions = Config.Bind("Main", "Add new actions to menus",
                 true, "Adds new actions to context menus where applicable");
 

@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using EFT.Interactive;
 using EFT;
 using HarmonyLib;
 using System.Collections;
+using System.Resources;
 using Comfort.Common;
-using EFT.UI.Ragfair;
 
 namespace SPTOpenSesame.Helpers
 {
@@ -39,6 +35,33 @@ namespace SPTOpenSesame.Helpers
             return true;
         }
 
+        private static string GetLocalisedString(string dataKey)
+        {
+            string translate;
+            try
+            {
+                var language = OpenSesamePlugin.NewActionsLanguage.Value;
+                var languageFile = LanguageUtil.GetLanguageFile(language);
+                var baseName = "SPTOpenSesame.Resources." + languageFile;
+                var resType = Type.GetType(baseName);
+                if (resType != null)
+                {
+                    var rm = new ResourceManager(baseName, resType.Assembly);
+                    translate = rm.GetString(dataKey);
+                }
+                else
+                {
+                    translate = dataKey;
+                }
+            }
+            catch
+            {
+                translate = dataKey;
+            }
+
+            return translate;
+        }
+
         public static void addDoNothingToActionList(object actionListObject)
         {
             if (!OpenSesamePlugin.AddDoNothingAction.Value)
@@ -46,22 +69,27 @@ namespace SPTOpenSesame.Helpers
                 return;
             }
 
+            var doNothing = GetLocalisedString("Do Nothing");
+
             // Create a new action to do nothing
             var newAction = Activator.CreateInstance(OpenSesamePlugin.ActionType);
 
-            AccessTools.Field(OpenSesamePlugin.ActionType, "Name").SetValue(newAction, "Do Nothing");
+            AccessTools.Field(OpenSesamePlugin.ActionType, "Name").SetValue(newAction, doNothing);
 
             InteractiveObjectInteractionWrapper unlockActionWrapper = new InteractiveObjectInteractionWrapper();
-            AccessTools.Field(OpenSesamePlugin.ActionType, "Action").SetValue(newAction, new Action(unlockActionWrapper.doNothingAction));
+            AccessTools.Field(OpenSesamePlugin.ActionType, "Action")
+                .SetValue(newAction, new Action(unlockActionWrapper.doNothingAction));
 
             AccessTools.Field(OpenSesamePlugin.ActionType, "Disabled").SetValue(newAction, false);
 
             // Add the new action to the context menu for the door
-            IList actionList = (IList)AccessTools.Field(OpenSesamePlugin.ResultType, "Actions").GetValue(actionListObject);
+            IList actionList =
+                (IList)AccessTools.Field(OpenSesamePlugin.ResultType, "Actions").GetValue(actionListObject);
             actionList.Add(newAction);
         }
 
-        public static void addOpenSesameToActionList(this WorldInteractiveObject interactiveObject, object actionListObject, GamePlayerOwner owner)
+        public static void addOpenSesameToActionList(this WorldInteractiveObject interactiveObject,
+            object actionListObject, GamePlayerOwner owner)
         {
             // Don't do anything else unless the door is locked and requires a key
             if ((interactiveObject.DoorState != EDoorState.Locked) || (interactiveObject.KeyId == ""))
@@ -72,38 +100,51 @@ namespace SPTOpenSesame.Helpers
             // Add "Do Nothing" to the action list as the default selection
             addDoNothingToActionList(actionListObject);
 
+            var openSesame = GetLocalisedString("Open Sesame");
+
             // Create a new action to unlock the door
             var newAction = Activator.CreateInstance(OpenSesamePlugin.ActionType);
 
-            AccessTools.Field(OpenSesamePlugin.ActionType, "Name").SetValue(newAction, "Open Sesame");
+            AccessTools.Field(OpenSesamePlugin.ActionType, "Name").SetValue(newAction, openSesame);
 
-            InteractiveObjectInteractionWrapper unlockActionWrapper = new InteractiveObjectInteractionWrapper(interactiveObject, owner);
-            AccessTools.Field(OpenSesamePlugin.ActionType, "Action").SetValue(newAction, new Action(unlockActionWrapper.unlockAndOpenAction));
+            InteractiveObjectInteractionWrapper unlockActionWrapper =
+                new InteractiveObjectInteractionWrapper(interactiveObject, owner);
+            AccessTools.Field(OpenSesamePlugin.ActionType, "Action")
+                .SetValue(newAction, new Action(unlockActionWrapper.unlockAndOpenAction));
 
-            AccessTools.Field(OpenSesamePlugin.ActionType, "Disabled").SetValue(newAction, !interactiveObject.Operatable);
+            AccessTools.Field(OpenSesamePlugin.ActionType, "Disabled")
+                .SetValue(newAction, !interactiveObject.Operatable);
 
             // Add the new action to the context menu for the door
-            IList actionList = (IList)AccessTools.Field(OpenSesamePlugin.ResultType, "Actions").GetValue(actionListObject);
+            IList actionList =
+                (IList)AccessTools.Field(OpenSesamePlugin.ResultType, "Actions").GetValue(actionListObject);
             actionList.Add(newAction);
         }
 
-        public static void addTurnOnPowerToActionList(this WorldInteractiveObject interactiveObject, object actionListObject)
+        public static void addTurnOnPowerToActionList(this WorldInteractiveObject interactiveObject,
+            object actionListObject)
         {
             // Add "Do Nothing" to the action list as the default selection
             addDoNothingToActionList(actionListObject);
 
+            var turnOnPower = GetLocalisedString("Turn On Power");
+
             // Create a new action to turn on the power switch
             var newAction = Activator.CreateInstance(OpenSesamePlugin.ActionType);
 
-            AccessTools.Field(OpenSesamePlugin.ActionType, "Name").SetValue(newAction, "Turn On Power");
+            AccessTools.Field(OpenSesamePlugin.ActionType, "Name").SetValue(newAction, turnOnPower);
 
-            InteractiveObjectInteractionWrapper turnOnPowerActionWrapper = new InteractiveObjectInteractionWrapper(OpenSesamePlugin.PowerSwitch);
-            AccessTools.Field(OpenSesamePlugin.ActionType, "Action").SetValue(newAction, new Action(turnOnPowerActionWrapper.turnOnAction));
+            InteractiveObjectInteractionWrapper turnOnPowerActionWrapper =
+                new InteractiveObjectInteractionWrapper(OpenSesamePlugin.PowerSwitch);
+            AccessTools.Field(OpenSesamePlugin.ActionType, "Action")
+                .SetValue(newAction, new Action(turnOnPowerActionWrapper.turnOnAction));
 
-            AccessTools.Field(OpenSesamePlugin.ActionType, "Disabled").SetValue(newAction, !OpenSesamePlugin.PowerSwitch.canToggle());
+            AccessTools.Field(OpenSesamePlugin.ActionType, "Disabled")
+                .SetValue(newAction, !OpenSesamePlugin.PowerSwitch.canToggle());
 
             // Add the new action to the context menu for the door
-            IList actionList = (IList)AccessTools.Field(OpenSesamePlugin.ResultType, "Actions").GetValue(actionListObject);
+            IList actionList =
+                (IList)AccessTools.Field(OpenSesamePlugin.ResultType, "Actions").GetValue(actionListObject);
             actionList.Add(newAction);
         }
 
@@ -114,7 +155,6 @@ namespace SPTOpenSesame.Helpers
 
             public InteractiveObjectInteractionWrapper()
             {
-
             }
 
             public InteractiveObjectInteractionWrapper(WorldInteractiveObject _interactiveObject) : this()
@@ -122,7 +162,8 @@ namespace SPTOpenSesame.Helpers
                 interactiveObject = _interactiveObject;
             }
 
-            public InteractiveObjectInteractionWrapper(WorldInteractiveObject _interactiveObject, GamePlayerOwner _owner) : this(_interactiveObject)
+            public InteractiveObjectInteractionWrapper(WorldInteractiveObject _interactiveObject,
+                GamePlayerOwner _owner) : this(_interactiveObject)
             {
                 owner = _owner;
             }
@@ -142,13 +183,15 @@ namespace SPTOpenSesame.Helpers
 
                 if (owner == null)
                 {
-                    LoggingUtil.LogError("A GamePlayerOwner must be defined to unlock and open object " + interactiveObject.Id);
+                    LoggingUtil.LogError("A GamePlayerOwner must be defined to unlock and open object " +
+                                         interactiveObject.Id);
                     return;
                 }
 
                 if (OpenSesamePlugin.WriteMessagesWhenUnlockingDoors.Value)
                 {
-                    LoggingUtil.LogInfo("Unlocking interactive object " + interactiveObject.Id + " which requires key " + interactiveObject.KeyId + "...");
+                    LoggingUtil.LogInfo("Unlocking interactive object " + interactiveObject.Id +
+                                        " which requires key " + interactiveObject.KeyId + "...");
                 }
 
                 // Unlock the door
@@ -175,7 +218,8 @@ namespace SPTOpenSesame.Helpers
                     return;
                 }
 
-                owner.Player.CurrentManagedState.ExecuteDoorInteraction(interactiveObject, gstruct.Value, null, owner.Player);
+                owner.Player.CurrentManagedState.ExecuteDoorInteraction(interactiveObject, gstruct.Value, null,
+                    owner.Player);
             }
 
             internal void turnOnAction()
@@ -198,7 +242,8 @@ namespace SPTOpenSesame.Helpers
                 }
 
                 Player you = Singleton<GameWorld>.Instance.MainPlayer;
-                you.CurrentManagedState.ExecuteDoorInteraction(interactiveObject, new InteractionResult(EInteractionType.Open), null, you);
+                you.CurrentManagedState.ExecuteDoorInteraction(interactiveObject,
+                    new InteractionResult(EInteractionType.Open), null, you);
             }
         }
     }
