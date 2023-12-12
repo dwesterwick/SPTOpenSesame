@@ -11,3 +11,12 @@ You can enable options in the Configuration Manager to write debug messages when
 You can also prevent this mod from adding actions to context menus via a Configuration Manager option.
 
 I wrote this to be agnostic of the SPT/EFT version, so you should rarely (if ever) have to update it.
+
+Translations for the new context-menu actions exist for:
+* English
+* Chinese
+
+If you would like to help me include other languages, please post a comment with the locale ID in *Aki_Data\Server\database\locales\global* and translations for:
+* "Do Nothing"
+* "Open Sesame"
+* "Turn On Power"

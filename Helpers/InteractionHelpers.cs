@@ -3,7 +3,6 @@ using EFT.Interactive;
 using EFT;
 using HarmonyLib;
 using System.Collections;
-using System.Resources;
 using Comfort.Common;
 
 namespace SPTOpenSesame.Helpers
@@ -35,33 +34,6 @@ namespace SPTOpenSesame.Helpers
             return true;
         }
 
-        private static string GetLocalisedString(string dataKey)
-        {
-            string translate;
-            try
-            {
-                var language = OpenSesamePlugin.NewActionsLanguage.Value;
-                var languageFile = LanguageUtil.GetLanguageFile(language);
-                var baseName = "SPTOpenSesame.Resources." + languageFile;
-                var resType = Type.GetType(baseName);
-                if (resType != null)
-                {
-                    var rm = new ResourceManager(baseName, resType.Assembly);
-                    translate = rm.GetString(dataKey);
-                }
-                else
-                {
-                    translate = dataKey;
-                }
-            }
-            catch
-            {
-                translate = dataKey;
-            }
-
-            return translate;
-        }
-
         public static void addDoNothingToActionList(object actionListObject)
         {
             if (!OpenSesamePlugin.AddDoNothingAction.Value)
@@ -69,13 +41,10 @@ namespace SPTOpenSesame.Helpers
                 return;
             }
 
-            var doNothing = GetLocalisedString("Do Nothing");
-            doNothing = "TestString";
-
             // Create a new action to do nothing
             var newAction = Activator.CreateInstance(OpenSesamePlugin.ActionType);
 
-            AccessTools.Field(OpenSesamePlugin.ActionType, "Name").SetValue(newAction, doNothing);
+            AccessTools.Field(OpenSesamePlugin.ActionType, "Name").SetValue(newAction, "DoNothing");
 
             InteractiveObjectInteractionWrapper unlockActionWrapper = new InteractiveObjectInteractionWrapper();
             AccessTools.Field(OpenSesamePlugin.ActionType, "Action")
@@ -101,12 +70,10 @@ namespace SPTOpenSesame.Helpers
             // Add "Do Nothing" to the action list as the default selection
             addDoNothingToActionList(actionListObject);
 
-            var openSesame = GetLocalisedString("Open Sesame");
-
             // Create a new action to unlock the door
             var newAction = Activator.CreateInstance(OpenSesamePlugin.ActionType);
 
-            AccessTools.Field(OpenSesamePlugin.ActionType, "Name").SetValue(newAction, openSesame);
+            AccessTools.Field(OpenSesamePlugin.ActionType, "Name").SetValue(newAction, "OpenSesame");
 
             InteractiveObjectInteractionWrapper unlockActionWrapper =
                 new InteractiveObjectInteractionWrapper(interactiveObject, owner);
@@ -128,12 +95,10 @@ namespace SPTOpenSesame.Helpers
             // Add "Do Nothing" to the action list as the default selection
             addDoNothingToActionList(actionListObject);
 
-            var turnOnPower = GetLocalisedString("Turn On Power");
-
             // Create a new action to turn on the power switch
             var newAction = Activator.CreateInstance(OpenSesamePlugin.ActionType);
 
-            AccessTools.Field(OpenSesamePlugin.ActionType, "Name").SetValue(newAction, turnOnPower);
+            AccessTools.Field(OpenSesamePlugin.ActionType, "Name").SetValue(newAction, "TurnOnPower");
 
             InteractiveObjectInteractionWrapper turnOnPowerActionWrapper =
                 new InteractiveObjectInteractionWrapper(OpenSesamePlugin.PowerSwitch);

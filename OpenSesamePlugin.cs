@@ -4,7 +4,6 @@ using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
-using SPTOpenSesame.Helpers;
 
 namespace SPTOpenSesame
 {
@@ -17,7 +16,6 @@ namespace SPTOpenSesame
             "Shopping_Mall_DesignStuff_00055"
         };
 
-        public static ConfigEntry<Language> NewActionsLanguage;
         public static ConfigEntry<bool> AddNewActions;
         public static ConfigEntry<bool> AddDoNothingAction;
         public static ConfigEntry<bool> WriteMessagesForAllDoors;
@@ -38,14 +36,13 @@ namespace SPTOpenSesame
 
             findTypes();
 
+            new Patches.MainMenuShowPatch().Enable();
             new Patches.OnGameStartedPatch().Enable();
             new Patches.GameWorldOnDestroyPatch().Enable();
             new Patches.InteractiveObjectInteractionPatch().Enable();
             new Patches.KeycardDoorInteractionPatch().Enable();
             new Patches.NoPowerTipInteractionPatch().Enable();
 
-            new Patches.MainMenuShowPatch().Enable();
-            
             addConfigOptions();
 
             Logger.LogInfo("Loading OpenSesame...done.");
@@ -53,9 +50,6 @@ namespace SPTOpenSesame
 
         private void addConfigOptions()
         {
-            NewActionsLanguage = Config.Bind("Main", "Actions Language", Language.English,
-                "The display text of new actions");
-            
             AddNewActions = Config.Bind("Main", "Add new actions to menus",
                 true, "Adds new actions to context menus where applicable");
 

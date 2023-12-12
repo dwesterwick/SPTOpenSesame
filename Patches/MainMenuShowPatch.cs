@@ -1,18 +1,20 @@
-﻿using Aki.Reflection.Patching;
-using EFT;
-using HarmonyLib;
-using SPTOpenSesame.Helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
+using Aki.Reflection.Patching;
+using HarmonyLib;
+using SPTOpenSesame.Helpers;
 
 namespace SPTOpenSesame.Patches
 {
     public class MainMenuShowPatch : ModulePatch
     {
+        private static bool translationsUpdated = false;
+
         protected override MethodBase GetTargetMethod()
         {
             return typeof(MainMenuController).GetMethod("ShowScreen", BindingFlags.Public | BindingFlags.Instance);
@@ -21,17 +23,26 @@ namespace SPTOpenSesame.Patches
         [PatchPostfix]
         private static void PatchPostfix()
         {
-            Dictionary<string, string> currentLanguageDictionary = getCurrentLanguageDictionary();
-            if (currentLanguageDictionary == null)
+            if (translationsUpdated)
             {
-                LoggingUtil.LogError("Cannot load language dictionary");
+                LoggingUtil.LogInfo("Translations have already been updated");
                 return;
             }
 
-            injectNewTranslations(currentLanguageDictionary);
+            Dictionary<string, GClass1719> locales = getLoadedLocales();
+            if ((locales == null) || (locales.Count == 0))
+            {
+                LoggingUtil.LogError("Cannot get loaded locales");
+                return;
+            }
+
+            LoggingUtil.LogInfo("Languages loaded: " + string.Join(", ", locales.Keys));
+            string currentLocale = locales.Keys.First();
+
+            translationsUpdated = tryInjectNewTranslations(currentLocale, locales[currentLocale]);
         }
 
-        private static Dictionary<string, string> getCurrentLanguageDictionary()
+        private static Dictionary<string, GClass1719> getLoadedLocales()
         {
             GClass1722 localeClass = (GClass1722)AccessTools.Property(typeof(GClass1722), "GClass1722_0").GetValue(null);
             if (localeClass == null)
@@ -41,23 +52,46 @@ namespace SPTOpenSesame.Patches
             }
             LoggingUtil.LogInfo("Loaded instance of GClass1722");
 
-            Dictionary<string, GClass1719> languages = (Dictionary<string, GClass1719>)AccessTools.Field(typeof(GClass1722), "dictionary_4").GetValue(localeClass);
-            if ((languages == null) || (languages.Count == 0))
-            {
-                LoggingUtil.LogError("Cannot get instance of dictionary_4");
-                return null;
-            }
+            Dictionary<string, GClass1719> locales = (Dictionary<string, GClass1719>)AccessTools.Field(typeof(GClass1722), "dictionary_4").GetValue(localeClass);
 
-            LoggingUtil.LogInfo("Languages loaded: " + string.Join(", ", languages.Keys));
-
-             return languages[languages.Keys.First()];
+            return locales;
         }
 
-        private static void injectNewTranslations(Dictionary<string, string> dictionary)
+        private static bool tryInjectNewTranslations(string locale, Dictionary<string, string> translations)
         {
-            dictionary.Add("TestString", "TRANSLATED TEXT");
+            string resName = "SPTOpenSesame.Resources." + locale;
+            Type resType = Type.GetType(resName);
+            if (resType == null)
+            {
+                LoggingUtil.LogError("Cannot get translations for locale \"" + locale + "\"");
+                return false;
+            }
 
-            LoggingUtil.LogInfo("Injected new translations");
+            PropertyInfo[] resEntries = resType.GetProperties(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetProperty);
+            foreach (PropertyInfo resEntry in resEntries)
+            {
+                if (translations.ContainsKey(resEntry.Name))
+                {
+                    continue;
+                }
+
+                if (resEntry.PropertyType != typeof(string))
+                {
+                    continue;
+                }
+
+                string translation = resEntry.GetValue(null, null) as string;
+                if ((translation == null) || (translation.Length == 0))
+                {
+                    LoggingUtil.LogError("Invalid translation for key \"" + resEntry.Name + "\" for locale \"" + locale + "\"");
+                    continue;
+                }
+
+                LoggingUtil.LogInfo("Injecting translation for \"" + resEntry.Name + "\" for locale \"" + locale + "\": " + translation + "...");
+                translations.Add(resEntry.Name, translation);
+            }
+
+            return true;
         }
     }
 }

@@ -75,7 +75,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\InteractionHelpers.cs" />
-    <Compile Include="Helpers\Language.cs" />
     <Compile Include="Helpers\LoggingUtil.cs" />
     <Compile Include="Patches\InteractiveObjectInteractionPatch.cs" />
     <Compile Include="Patches\GameWorldOnDestroyPatch.cs" />
@@ -85,13 +84,15 @@
     <Compile Include="Patches\OnGameStartedPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OpenSesamePlugin.cs" />
-    <Compile Include="Resources\en_US.Designer.cs">
+    <Compile Include="Resources\en.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>en_US.resx</DependentUpon>
+      <DependentUpon>en.resx</DependentUpon>
     </Compile>
-    <Compile Include="Resources\zh_CN.Designer.cs">
-      <DependentUpon>zh_CN.resx</DependentUpon>
+    <Compile Include="Resources\ch.Designer.cs">
+      <DependentUpon>ch.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -101,13 +102,13 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\en_US.resx">
+    <EmbeddedResource Include="Resources\en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>en_US.Designer.cs</LastGenOutput>
+      <LastGenOutput>en.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\zh_CN.resx">
+    <EmbeddedResource Include="Resources\ch.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>zh_CN.Designer.cs</LastGenOutput>
+      <LastGenOutput>ch.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
