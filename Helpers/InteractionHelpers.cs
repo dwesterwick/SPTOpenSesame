@@ -70,6 +70,7 @@ namespace SPTOpenSesame.Helpers
             }
 
             var doNothing = GetLocalisedString("Do Nothing");
+            doNothing = "TestString";
 
             // Create a new action to do nothing
             var newAction = Activator.CreateInstance(OpenSesamePlugin.ActionType);

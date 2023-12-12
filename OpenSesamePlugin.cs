@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
@@ -42,6 +43,8 @@ namespace SPTOpenSesame
             new Patches.InteractiveObjectInteractionPatch().Enable();
             new Patches.KeycardDoorInteractionPatch().Enable();
             new Patches.NoPowerTipInteractionPatch().Enable();
+
+            new Patches.MainMenuShowPatch().Enable();
             
             addConfigOptions();
 

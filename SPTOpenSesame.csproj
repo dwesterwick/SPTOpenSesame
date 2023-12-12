@@ -80,6 +80,7 @@
     <Compile Include="Patches\InteractiveObjectInteractionPatch.cs" />
     <Compile Include="Patches\GameWorldOnDestroyPatch.cs" />
     <Compile Include="Patches\KeycardDoorInteractionPatch.cs" />
+    <Compile Include="Patches\MainMenuShowPatch.cs" />
     <Compile Include="Patches\NoPowerTipInteractionPatch.cs" />
     <Compile Include="Patches\OnGameStartedPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
