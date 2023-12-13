@@ -36,7 +36,6 @@ namespace SPTOpenSesame
 
             findTypes();
 
-            new Patches.MainMenuShowPatch().Enable();
             new Patches.OnGameStartedPatch().Enable();
             new Patches.GameWorldOnDestroyPatch().Enable();
             new Patches.InteractiveObjectInteractionPatch().Enable();
@@ -44,6 +43,8 @@ namespace SPTOpenSesame
             new Patches.NoPowerTipInteractionPatch().Enable();
 
             addConfigOptions();
+
+            Helpers.LocalizationUtil.AddLocaleUpdateListener(Helpers.LocalizationUtil.AddNewTranslations);
 
             Logger.LogInfo("Loading OpenSesame...done.");
         }
