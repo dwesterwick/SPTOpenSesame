@@ -27,7 +27,7 @@ namespace SPTOpenSesame.Patches
             }
 
             // Try to add the "Turn On Power" action to the doors's context menu
-            OpenSesamePlugin.PowerSwitch.addTurnOnPowerToActionList(__result);
+            OpenSesamePlugin.PowerSwitch.AddTurnOnPowerToActionList(__result);
         }
     }
 }

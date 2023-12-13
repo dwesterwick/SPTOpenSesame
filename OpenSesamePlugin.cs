@@ -30,8 +30,9 @@ namespace SPTOpenSesame
 
             Helpers.LoggingUtil.Logger = Logger;
 
-            Helpers.InteractionHelpers.LoadTypes();
-            Helpers.LocalizationUtil.LoadTypes();
+            // Find types so we don't need to use GClasses
+            Helpers.InteractionHelpers.FindTypes();
+            Helpers.LocalizationUtil.FindTypes();
 
             new Patches.OnGameStartedPatch().Enable();
             new Patches.GameWorldOnDestroyPatch().Enable();
@@ -41,6 +42,7 @@ namespace SPTOpenSesame
 
             addConfigOptions();
 
+            // Add a listener to automatically add translations when EFT first loads and when the user switches languages
             Helpers.LocalizationUtil.AddLocaleUpdateListener(Helpers.LocalizationUtil.AddNewTranslations);
 
             Logger.LogInfo("Loading OpenSesame...done.");

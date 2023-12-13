@@ -22,7 +22,7 @@ namespace SPTOpenSesame.Patches
         private static void PatchPostfix(ref object __result, GamePlayerOwner owner, KeycardDoor door, bool isProxy)
         {
             // Ignore interactions from bots
-            if (InteractionHelpers.isInteractorABot(owner))
+            if (InteractionHelpers.IsInteractorABot(owner))
             {
                 return;
             }
@@ -38,7 +38,7 @@ namespace SPTOpenSesame.Patches
             }
 
             // Try to add the "Open Sesame" action to the door's context menu
-            door.addOpenSesameToActionList(__result, owner);
+            door.AddOpenSesameToActionList(__result, owner);
         }
     }
 }

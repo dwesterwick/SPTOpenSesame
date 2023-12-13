@@ -20,7 +20,10 @@ namespace SPTOpenSesame.Patches
         [PatchPostfix]
         private static void PatchPostfix(GameWorld __instance)
         {
-            Switch[] powerSwitches = UnityEngine.Object.FindObjectsOfType<Switch>().Where(s => OpenSesamePlugin.PowerSwitchIds.Contains(s.Id)).ToArray();
+            IEnumerable<Switch> powerSwitches = UnityEngine.Object
+                .FindObjectsOfType<Switch>()
+                .Where(s => OpenSesamePlugin.PowerSwitchIds.Contains(s.Id));
+            
             foreach (Switch powerSwitch in powerSwitches)
             {
                 Helpers.LoggingUtil.LogInfo("Found power switch " + powerSwitch.Id);
