@@ -15,7 +15,7 @@ namespace SPTOpenSesame.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return OpenSesamePlugin.TargetType.GetMethod("smethod_13", BindingFlags.NonPublic | BindingFlags.Static);
+            return InteractionHelpers.TargetType.GetMethod("smethod_13", BindingFlags.NonPublic | BindingFlags.Static);
         }
 
         [PatchPostfix]

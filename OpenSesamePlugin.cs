@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
-using HarmonyLib;
 
 namespace SPTOpenSesame
 {
@@ -17,20 +16,13 @@ namespace SPTOpenSesame
             "Shopping_Mall_DesignStuff_00055"
         };
 
+        public static EFT.Interactive.Switch PowerSwitch { get; set; } = null;
+
         public static ConfigEntry<bool> AddNewActions;
         public static ConfigEntry<bool> AddDoNothingAction;
         public static ConfigEntry<bool> WriteMessagesForAllDoors;
         public static ConfigEntry<bool> WriteMessagesWhenUnlockingDoors;
         public static ConfigEntry<bool> WriteMessagesWhenTogglingSwitches;
-
-        public static Type TargetType { get; set; } = null;
-        public static Type ResultType { get; set; } = null;
-        public static Type ActionType { get; set; } = null;
-        public static Type LocaleManagerType { get; set; } = null;
-        public static Type TranslationsType { get; set; } = null;
-        public static string TranslationsFieldName { get; set; } = null;
-
-        public static EFT.Interactive.Switch PowerSwitch { get; set; } = null;
 
         private void Awake()
         {
@@ -38,7 +30,8 @@ namespace SPTOpenSesame
 
             Helpers.LoggingUtil.Logger = Logger;
 
-            findTypes();
+            Helpers.InteractionHelpers.LoadTypes();
+            Helpers.LocalizationUtil.LoadTypes();
 
             new Patches.OnGameStartedPatch().Enable();
             new Patches.GameWorldOnDestroyPatch().Enable();
@@ -69,64 +62,6 @@ namespace SPTOpenSesame
 
             WriteMessagesWhenTogglingSwitches = Config.Bind("Logging", "Write messages when toggling switches",
                 false, "Write a debug message to the game console when you toggle a switch");
-        }
-
-        private void findTypes()
-        {
-            Type[] targetTypeOptions = Aki.Reflection.Utils.PatchConstants.EftTypes.Where(t => t.GetMethods().Any(m => m.Name.Contains("GetAvailableActions"))).ToArray();
-            if (targetTypeOptions.Length != 1)
-            {
-                throw new TypeLoadException("Cannot find target method");
-            }
-
-            TargetType = targetTypeOptions[0];
-            Helpers.LoggingUtil.LogInfo("Target type: " + TargetType.FullName);
-            
-            ResultType = AccessTools.FirstMethod(TargetType, m => m.Name.Contains("GetAvailableActions")).ReturnType;
-            Helpers.LoggingUtil.LogInfo("Return type: " + ResultType.FullName);
-
-            ActionType = AccessTools.Field(ResultType, "SelectedAction").FieldType;
-            Helpers.LoggingUtil.LogInfo("Action type: " + ActionType.FullName);
-
-            Type[] localeManagerTypeOptions = Aki.Reflection.Utils.PatchConstants.EftTypes.Where(t => t.GetMethods().Any(m => m.Name.Contains("AddLocaleUpdateListener"))).ToArray();
-            if (localeManagerTypeOptions.Length != 1)
-            {
-                throw new TypeLoadException("Cannot find target method");
-            }
-
-            LocaleManagerType = localeManagerTypeOptions[0];
-            Helpers.LoggingUtil.LogInfo("Locale manager type: " + LocaleManagerType.FullName);
-
-            string methodName = "UpdateMainMenuLocales";
-            MethodInfo updateMainMenuLocalesMethod = AccessTools.FirstMethod(LocaleManagerType, m => m.Name.Contains(methodName));
-            if (updateMainMenuLocalesMethod == null)
-            {
-                throw new MissingMethodException(LocaleManagerType.FullName, methodName);
-            }
-
-            string paramName = "newLocale";
-            ParameterInfo[] updateMainMenuLocalesMethodParamOptions = updateMainMenuLocalesMethod.GetParameters().Where(p => p.Name == paramName).ToArray();
-            if (localeManagerTypeOptions.Length != 1)
-            {
-                throw new TypeLoadException("Cannot find parameter " + paramName + " in method " + methodName);
-            }
-
-            TranslationsType = updateMainMenuLocalesMethodParamOptions[0].ParameterType;
-            Helpers.LoggingUtil.LogInfo("Translations type: " + TranslationsType.FullName);
-
-            FieldInfo[] translationFieldOptions = AccessTools.GetDeclaredFields(LocaleManagerType)
-                .Where(f => f.FieldType.IsGenericType && f.FieldType.GetGenericTypeDefinition() == typeof(Dictionary<,>))
-                .Where(f => f.FieldType.GetGenericArguments()[1] == TranslationsType)
-                .ToArray();
-            if (translationFieldOptions.Length != 1)
-            {
-                Helpers.LoggingUtil.LogInfo("Found possible matches for translations dictionary field: " + string.Join(", ", translationFieldOptions.Select(f => f.Name)));
-
-                throw new MissingFieldException("Cannot find translations dictionary field in class " + LocaleManagerType.FullName);
-            }
-
-            TranslationsFieldName = translationFieldOptions[0].Name;
-            Helpers.LoggingUtil.LogInfo("Translations field name: " + TranslationsFieldName);
         }
     }
 }
