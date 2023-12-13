@@ -12,35 +12,50 @@ namespace SPTOpenSesame.Helpers
     {
         private static List<string> updatedLocales = new List<string>();
 
-        public static void AddLocaleUpdateListener(Action<object> updateAction)
+        public static object AddLocaleUpdateListener(Action<object> updateAction)
         {
-            GClass1722 localeObj = (GClass1722)AccessTools.Property(typeof(GClass1722), "GClass1722_0").GetValue(null);
-            if (localeObj == null)
+            string instanceName = OpenSesamePlugin.LocaleManagerType.FullName + "_0";
+            object localeManagerObj = AccessTools.Property(OpenSesamePlugin.LocaleManagerType, instanceName).GetValue(null);
+            if (localeManagerObj == null)
             {
-                LoggingUtil.LogError("Cannot get instance of GClass1722_0");
-                return;
+                LoggingUtil.LogError("Cannot get instance of " + instanceName);
+                return null;
             }
 
             LoggingUtil.LogInfo("Adding locale update listener...");
 
-            localeObj.AddLocaleUpdateListener(() => { updateAction(localeObj); });
+            string methodName = "AddLocaleUpdateListener";
+            MethodInfo addLocaleUpdateListenerMethod = AccessTools.FirstMethod(OpenSesamePlugin.LocaleManagerType, m => m.Name.Contains(methodName));
+            if (addLocaleUpdateListenerMethod == null)
+            {
+                LoggingUtil.LogError("Cannot find method " + methodName + " in type " + OpenSesamePlugin.LocaleManagerType.FullName);
+                return null;
+            }
+
+            Action localeUpdateAction = () => { updateAction(localeManagerObj); };
+            return addLocaleUpdateListenerMethod.Invoke(localeManagerObj, new object[] { localeUpdateAction });
         }
 
-        public static void AddNewTranslations(object localeObj)
+        public static void AddNewTranslations(object localeManager)
         {
-            Dictionary<string, GClass1719> loadedLocales = (Dictionary<string, GClass1719>)AccessTools.Field(typeof(GClass1722), "dictionary_4").GetValue(localeObj);
+            object loadedLocalesObj = AccessTools.Field(OpenSesamePlugin.LocaleManagerType, OpenSesamePlugin.TranslationsFieldName).GetValue(localeManager);
+            Dictionary<string, GClass1719> loadedLocales = loadedLocalesObj as Dictionary<string, GClass1719>;
+            //IDictionary<string, IDictionary<string, string>> loadedLocales = loadedLocalesObj as IDictionary<string, IDictionary<string, string>>;
+            if (loadedLocales == null)
+            {
+                LoggingUtil.LogError("Cannot load translations");
+                return;
+            }
 
-            foreach (var (locale, translations) in loadedLocales)
+            foreach (string locale in loadedLocales.Keys)
             {
                 if (updatedLocales.Contains(locale))
                 {
                     continue;
                 }
 
-                LoggingUtil.LogInfo("Adding new translations for locale \"" + locale + "\"...");
-
                 Dictionary<string, string> newTranslations = GetNewTranslationsForLocale(locale)
-                    .Where(x => !translations.ContainsKey(x.Key))
+                    .Where(x => !loadedLocales[locale].ContainsKey(x.Key))
                     .ToDictionary(x => x.Key, x => x.Value);
 
                 if (newTranslations.Count == 0)
@@ -49,8 +64,10 @@ namespace SPTOpenSesame.Helpers
                     continue;
                 }
 
-                translations.AddRange(newTranslations);
+                loadedLocales[locale].AddRange(newTranslations);
                 updatedLocales.Add(locale);
+
+                LoggingUtil.LogInfo("Added new translations for locale \"" + locale + "\"");
             }
         }
 
@@ -74,7 +91,7 @@ namespace SPTOpenSesame.Helpers
                     continue;
                 }
 
-                LoggingUtil.LogInfo("Adding translation for \"" + resEntry.Name + "\" for locale \"" + locale + "\": " + translation + "...");
+                //LoggingUtil.LogInfo("Found translation for \"" + resEntry.Name + "\" for locale \"" + locale + "\": " + translation);
                 translations.Add(resEntry.Name, translation);
             }
 
