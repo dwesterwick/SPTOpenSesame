@@ -20,3 +20,6 @@ If you would like to help me include other languages, please post a comment with
 * "Do Nothing"
 * "Open Sesame"
 * "Turn On Power"
+
+Known Issues:
+* Cannot directly open the saferoom door in Interchange. You can only open it via the keypad in the Burger Spot restroom. 
