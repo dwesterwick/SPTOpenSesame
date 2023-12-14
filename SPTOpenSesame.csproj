@@ -84,6 +84,16 @@
     <Compile Include="Patches\OnGameStartedPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OpenSesamePlugin.cs" />
+    <Compile Include="Resources\ge.Designer.cs">
+      <DependentUpon>ge.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\ru.Designer.cs">
+      <DependentUpon>ru.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Resources\en.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -99,6 +109,14 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\ge.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ge.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ru.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ru.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\en.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>en.Designer.cs</LastGenOutput>

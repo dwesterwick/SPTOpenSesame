@@ -7,7 +7,7 @@ using BepInEx.Configuration;
 
 namespace SPTOpenSesame
 {
-    [BepInPlugin("com.DanW.OpenSesame", "DanW-OpenSesame", "2.1.0")]
+    [BepInPlugin("com.DanW.OpenSesame", "DanW-OpenSesame", "2.1.1")]
     public class OpenSesamePlugin : BaseUnityPlugin
     {
         public static string[] PowerSwitchIds = new string[]

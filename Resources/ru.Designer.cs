@@ -22,14 +22,14 @@ namespace SPTOpenSesame.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class ch {
+    internal class ru {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ch() {
+        internal ru() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace SPTOpenSesame.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SPTOpenSesame.Resources.ch", typeof(ch).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SPTOpenSesame.Resources.ru", typeof(ru).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,7 +61,7 @@ namespace SPTOpenSesame.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 无动作.
+        ///   Looks up a localized string similar to Ничего не делать.
         /// </summary>
         internal static string DoNothing {
             get {
@@ -70,7 +70,7 @@ namespace SPTOpenSesame.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 芝麻开门.
+        ///   Looks up a localized string similar to Сезам, откройся.
         /// </summary>
         internal static string OpenSesame {
             get {
@@ -79,7 +79,7 @@ namespace SPTOpenSesame.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 打开电源.
+        ///   Looks up a localized string similar to Включить питание.
         /// </summary>
         internal static string TurnOnPower {
             get {
