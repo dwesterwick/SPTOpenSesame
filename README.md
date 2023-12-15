@@ -15,6 +15,9 @@ I wrote this to be agnostic of the SPT/EFT version, so you should rarely (if eve
 Translations for the new context-menu actions exist for:
 * English
 * Chinese
+* French
+* German
+* Russian
 
 If you would like to help me include other languages, please post a comment with the locale ID in *Aki_Data\Server\database\locales\global* and translations for:
 * "Do Nothing"
