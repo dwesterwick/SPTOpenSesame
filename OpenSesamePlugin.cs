@@ -7,7 +7,7 @@ using BepInEx.Configuration;
 
 namespace SPTOpenSesame
 {
-    [BepInPlugin("com.DanW.OpenSesame", "DanW-OpenSesame", "2.1.1")]
+    [BepInPlugin("com.DanW.OpenSesame", "DanW-OpenSesame", "2.2.0")]
     public class OpenSesamePlugin : BaseUnityPlugin
     {
         public static string[] PowerSwitchIds = new string[]
@@ -43,7 +43,7 @@ namespace SPTOpenSesame
             addConfigOptions();
 
             // Add a listener to automatically add translations when EFT first loads and when the user switches languages
-            Helpers.LocalizationUtil.AddLocaleUpdateListener(Helpers.LocalizationUtil.AddNewTranslations);
+            Helpers.LocalizationUtil.AddLocaleUpdateListener(Helpers.LocalizationUtil.AddNewTranslationsForLoadedLocales);
 
             Logger.LogInfo("Loading OpenSesame...done.");
         }

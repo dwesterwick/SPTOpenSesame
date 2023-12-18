@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using HarmonyLib;
@@ -16,6 +17,7 @@ namespace SPTOpenSesame.Helpers
         private static string translationsFieldName = null;
 
         private static List<string> updatedLocales = new List<string>();
+        private static string defaultLocale = "en";
 
         public static void FindTypes()
         {
@@ -105,7 +107,7 @@ namespace SPTOpenSesame.Helpers
             return addLocaleUpdateListenerMethod.Invoke(localeManagerObj, new object[] { localeUpdateAction });
         }
 
-        public static void AddNewTranslations(object localeManager)
+        public static void AddNewTranslationsForLoadedLocales(object localeManager)
         {
             if (!HaveTypesBeenFound())
             {
@@ -130,46 +132,70 @@ namespace SPTOpenSesame.Helpers
                     continue;
                 }
 
-                // Get the translations for the locale
-                IDictionary<string, string> translations = loadedLocales[locale] as IDictionary<string, string>;
-                if (translations == null)
+                // Get the existing translations for the locale
+                IDictionary<string, string> existingTranslations = loadedLocales[locale] as IDictionary<string, string>;
+                if (existingTranslations == null)
                 {
-                    LoggingUtil.LogError("Cannot load translations for locale \"" + locale + "\"");
+                    LoggingUtil.LogError("Cannot load existing translations for locale \"" + locale + "\"");
                     continue;
                 }
 
-                // Get the translations that need to be added;
-                Dictionary<string, string> newTranslations = GetNewTranslationsForLocale(locale);
-                if (newTranslations.Count == 0)
+                // Check if translations can be added for the locale
+                if (!TryAddNewTranslationsForLocale(locale, existingTranslations))
                 {
-                    LoggingUtil.LogWarning("No new translations to add for locale \"" + locale + "\"");
+                    LoggingUtil.LogError("Could not new translations for locale \"" + locale + "\"");
                     continue;
                 }
 
-                // Make sure translations don't already exist for the keys that will be added
-                if (newTranslations.Any(x => translations.ContainsKey(x.Key)))
-                {
-                    LoggingUtil.LogError("Duplicate translations found for locale \"" + locale + "\". New translations will not be added.");
-                    continue;
-                }
-
-                // Add the new translations and track that the locale has been updated
-                translations.AddRange(newTranslations);
                 updatedLocales.Add(locale);
-
                 LoggingUtil.LogInfo("Added new translations for locale \"" + locale + "\"");
             }
         }
 
-        public static Dictionary<string, string> GetNewTranslationsForLocale(string locale)
+        public static bool TryAddNewTranslationsForLocale(string locale, IDictionary<string, string> existingTranslations)
+        {
+            // Load the matching resource type for the selected locale
+            Type resType = GetTranslationResourceType(locale);
+            if (resType == null)
+            {
+                // If this is the default locale, there is no fall-back option, so throw an exception
+                if (locale == defaultLocale)
+                {
+                    throw new TypeLoadException("Cannot load new translations for default locale (\"" + locale + "\")");
+                }
+
+                // If a matching type cannot be found, load the one for English instead
+                LoggingUtil.LogError("Cannot get new translations for locale \"" + locale + "\". Trying to use translations for default locale (\"" + defaultLocale + "\") instead...");
+                return TryAddNewTranslationsForLocale(defaultLocale, existingTranslations);
+            }
+            
+            // Get the translations that need to be added;
+            Dictionary<string, string> newTranslations = GetNewTranslationsForLocale(locale, resType);
+            if (newTranslations.Count == 0)
+            {
+                LoggingUtil.LogWarning("No new translations to add for locale \"" + locale + "\"");
+                return false;
+            }
+
+            // Make sure translations don't already exist for the keys that will be added
+            if (newTranslations.Any(x => existingTranslations.ContainsKey(x.Key)))
+            {
+                LoggingUtil.LogError("Duplicate translations found for locale \"" + locale + "\". New translations will not be added.");
+                return false;
+            }
+
+            // Add the new translations and track that the locale has been updated
+            existingTranslations.AddRange(newTranslations);
+
+            return true;
+        }
+
+        public static Dictionary<string, string> GetNewTranslationsForLocale(string locale, Type resourceType)
         {
             Dictionary<string, string> translations = new Dictionary<string, string>();
 
-            // Load the matching resource type for the selected locale
-            Type resType = GetTranslationResourceType(locale);
-
             // Find all new translations in the resource 
-            PropertyInfo[] resEntries = resType.GetProperties(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetProperty);
+            PropertyInfo[] resEntries = resourceType.GetProperties(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.GetProperty);
             foreach (PropertyInfo resEntry in resEntries)
             {
                 // Make sure the property type is a string
@@ -195,23 +221,14 @@ namespace SPTOpenSesame.Helpers
 
         public static Type GetTranslationResourceType(string locale)
         {
-            string resName = "SPTOpenSesame.Resources." + locale;
+            // Dashes are automatically changed to underscores in resource file names
+            string adjustedLocaleName = locale.Replace('-', '_');
+
+            string _namespace = "SPTOpenSesame.Resources";
+            string resName = _namespace + "." + adjustedLocaleName;
             Type resType = Type.GetType(resName);
-            if (resType != null)
-            {
-                return resType;
-            }
 
-            LoggingUtil.LogError("Cannot get new translations for locale \"" + locale + "\", falling back to locale \"en\"");
-
-            resName = "SPTOpenSesame.Resources.en";
-            resType = Type.GetType(resName);
-            if (resType != null)
-            {
-                return resType;
-            }
-
-            throw new TypeLoadException("Cannot load new translations from default locale (\"en\")");
+            return resType;
         }
     }
 }

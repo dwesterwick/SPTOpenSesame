@@ -17,7 +17,9 @@ Translations for the new context-menu actions exist for:
 * Chinese
 * French
 * German
+* Portuguese
 * Russian
+* Spanish
 
 If you would like to help me include other languages, please post a comment with the locale ID in *Aki_Data\Server\database\locales\global* and translations for:
 * "Do Nothing"

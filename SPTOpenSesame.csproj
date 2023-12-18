@@ -84,6 +84,11 @@
     <Compile Include="Patches\OnGameStartedPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OpenSesamePlugin.cs" />
+    <Compile Include="Resources\es_mx.Designer.cs">
+      <DependentUpon>es_mx.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Resources\ge.Designer.cs">
       <DependentUpon>ge.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -91,6 +96,16 @@
     </Compile>
     <Compile Include="Resources\fr.Designer.cs">
       <DependentUpon>fr.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\es.Designer.cs">
+      <DependentUpon>es.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Resources\po.Designer.cs">
+      <DependentUpon>po.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
@@ -114,6 +129,10 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\es_mx.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>es_mx.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\ge.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ge.Designer.cs</LastGenOutput>
@@ -121,6 +140,14 @@
     <EmbeddedResource Include="Resources\fr.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>fr.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\es.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>es.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\po.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>po.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\ru.resx">
       <Generator>ResXFileCodeGenerator</Generator>
