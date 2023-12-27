@@ -84,6 +84,11 @@
     <Compile Include="Patches\OnGameStartedPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OpenSesamePlugin.cs" />
+    <Compile Include="Resources\kr.Designer.cs">
+      <DependentUpon>kr.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Resources\es_mx.Designer.cs">
       <DependentUpon>es_mx.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -129,6 +134,10 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\kr.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>kr.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\es_mx.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>es_mx.Designer.cs</LastGenOutput>

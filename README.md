@@ -17,6 +17,7 @@ Translations for the new context-menu actions exist for:
 * Chinese
 * French
 * German
+* Korean
 * Portuguese
 * Russian
 * Spanish
