@@ -16,7 +16,7 @@ namespace SPTOpenSesame.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return InteractionHelpers.TargetType.GetMethod("smethod_2", BindingFlags.NonPublic | BindingFlags.Static);
+            return InteractionHelpers.TargetType.GetMethod("smethod_3", BindingFlags.Public | BindingFlags.Static);
         }
 
         [PatchPostfix]

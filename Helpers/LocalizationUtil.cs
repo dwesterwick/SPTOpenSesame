@@ -83,11 +83,22 @@ namespace SPTOpenSesame.Helpers
             }
 
             // Get the property that returns the static instance of the class
-            string instanceName = localeManagerType.FullName + "_0";
-            object localeManagerObj = AccessTools.Property(localeManagerType, instanceName).GetValue(null);
+            IEnumerable<PropertyInfo> localeManagerGetters = AccessTools.GetDeclaredProperties(localeManagerType).Where(p => p.PropertyType == localeManagerType);
+            if (!localeManagerGetters.Any())
+            {
+                LoggingUtil.LogError("Cannot find property to get the static instance of " + localeManagerType.FullName);
+                return null;
+            }
+            if (localeManagerGetters.Count() > 1)
+            {
+                LoggingUtil.LogError("Found too many properties to get the static instance of " + localeManagerType.FullName);
+                return null;
+            }
+
+            object localeManagerObj = localeManagerGetters.First().GetValue(null);
             if (localeManagerObj == null)
             {
-                LoggingUtil.LogError("Cannot get instance of " + instanceName);
+                LoggingUtil.LogError("Cannot get static instance of " + localeManagerType.FullName);
                 return null;
             }
 
