@@ -19,7 +19,7 @@ namespace SPTOpenSesame.Helpers
         {
             // Find the class that generates the context menus for each object type
             string methodName = "GetAvailableActions";
-            Type[] targetTypeOptions = Aki.Reflection.Utils.PatchConstants.EftTypes.Where(t => t.GetMethods().Any(m => m.Name.Contains(methodName))).ToArray();
+            Type[] targetTypeOptions = SPT.Reflection.Utils.PatchConstants.EftTypes.Where(t => t.GetMethods().Any(m => m.Name.Contains(methodName))).ToArray();
             if (targetTypeOptions.Length != 1)
             {
                 throw new TypeLoadException("Cannot find type containing method " + methodName);
