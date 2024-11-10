@@ -74,7 +74,7 @@ namespace SPTOpenSesame.Helpers
 
         public static void AddDoNothingToActionList(object actionListObject)
         {
-            if (!OpenSesamePlugin.AddDoNothingAction.Value)
+            if (!OpenSesamePlugin.FeaturesEnabled.Value.HasFlag(OpenSesamePlugin.EFeaturesEnabled.DoNothing))
             {
                 return;
             }
@@ -193,7 +193,7 @@ namespace SPTOpenSesame.Helpers
                     return;
                 }
 
-                if (OpenSesamePlugin.WriteMessagesWhenUnlockingDoors.Value)
+                if (OpenSesamePlugin.DebugMessagesEnabled.Value.HasFlag(OpenSesamePlugin.EDebugMessagesEnabled.UnlockingDoors))
                 {
                     LoggingUtil.LogInfo("Unlocking interactive object " + interactiveObject.Id + " which requires key " + interactiveObject.KeyId + "...");
                 }
@@ -208,7 +208,7 @@ namespace SPTOpenSesame.Helpers
                     return;
                 }
 
-                if (OpenSesamePlugin.WriteMessagesWhenUnlockingDoors.Value)
+                if (OpenSesamePlugin.DebugMessagesEnabled.Value.HasFlag(OpenSesamePlugin.EDebugMessagesEnabled.UnlockingDoors))
                 {
                     LoggingUtil.LogInfo("Opening interactive object " + interactiveObject.Id + "...");
                 }
@@ -239,7 +239,7 @@ namespace SPTOpenSesame.Helpers
                     return;
                 }
 
-                if (OpenSesamePlugin.WriteMessagesWhenTogglingSwitches.Value)
+                if (OpenSesamePlugin.DebugMessagesEnabled.Value.HasFlag(OpenSesamePlugin.EDebugMessagesEnabled.TogglingSwitches))
                 {
                     LoggingUtil.LogInfo("Toggling object " + interactiveObject.Id + "...");
                 }

@@ -21,7 +21,7 @@ namespace SPTOpenSesame.Patches
         [PatchPostfix]
         private static void PatchPostfix(ref object __result, NoPowerTip noPowerTip)
         {
-            if (!OpenSesamePlugin.AddNewActions.Value)
+            if (!OpenSesamePlugin.FeaturesEnabled.Value.HasFlag(OpenSesamePlugin.EFeaturesEnabled.TurnOnPower))
             {
                 return;
             }

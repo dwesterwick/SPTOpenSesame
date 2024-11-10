@@ -28,12 +28,12 @@ namespace SPTOpenSesame.Patches
                 return;
             }
 
-            if (OpenSesamePlugin.WriteMessagesForAllDoors.Value)
+            if (OpenSesamePlugin.DebugMessagesEnabled.Value.HasFlag(OpenSesamePlugin.EDebugMessagesEnabled.DoorInteractions))
             {
                 LoggingUtil.LogInfo("Checking available actions for object " + worldInteractiveObject.Id + "...");
             }
 
-            if (!OpenSesamePlugin.AddNewActions.Value)
+            if (!OpenSesamePlugin.FeaturesEnabled.Value.HasFlag(OpenSesamePlugin.EFeaturesEnabled.UnlockDoors))
             {
                 return;
             }

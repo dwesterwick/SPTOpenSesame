@@ -7,7 +7,7 @@ using BepInEx.Configuration;
 
 namespace SPTOpenSesame
 {
-    [BepInPlugin("com.DanW.OpenSesame", "DanW-OpenSesame", "2.4.0")]
+    [BepInPlugin("com.DanW.OpenSesame", "DanW-OpenSesame", "2.4.1")]
     public class OpenSesamePlugin : BaseUnityPlugin
     {
         public static string[] PowerSwitchIds = new string[]
@@ -18,11 +18,28 @@ namespace SPTOpenSesame
 
         public static EFT.Interactive.Switch PowerSwitch { get; set; } = null;
 
-        public static ConfigEntry<bool> AddNewActions;
-        public static ConfigEntry<bool> AddDoNothingAction;
-        public static ConfigEntry<bool> WriteMessagesForAllDoors;
-        public static ConfigEntry<bool> WriteMessagesWhenUnlockingDoors;
-        public static ConfigEntry<bool> WriteMessagesWhenTogglingSwitches;
+        [Flags]
+        public enum EFeaturesEnabled
+        {
+            UnlockDoors = 1,
+            TurnOnPower = 2,
+            DoNothing = 4,
+
+            All = UnlockDoors | TurnOnPower | DoNothing,
+        }
+
+        [Flags]
+        public enum EDebugMessagesEnabled
+        {
+            DoorInteractions = 1,
+            UnlockingDoors = 2,
+            TogglingSwitches = 4,
+
+            All = DoorInteractions | UnlockingDoors | TogglingSwitches,
+        }
+
+        public static ConfigEntry<EFeaturesEnabled> FeaturesEnabled;
+        public static ConfigEntry<EDebugMessagesEnabled> DebugMessagesEnabled;
 
         private void Awake()
         {
@@ -50,20 +67,11 @@ namespace SPTOpenSesame
 
         private void addConfigOptions()
         {
-            AddNewActions = Config.Bind("Main", "Add new actions to menus",
-                true, "Adds new actions to context menus where applicable");
+            FeaturesEnabled = Config.Bind("Main", "Enabled Features",
+                EFeaturesEnabled.All, "Enabled features of this mod");
 
-            AddDoNothingAction = Config.Bind("Main", "Add Do-Nothing action to menus",
-                true, "Adds the \"Do Nothing\" action to context menus where applicable so you don't accidentally unlock things");
-
-            WriteMessagesForAllDoors = Config.Bind("Logging", "Write messages for all doors",
-                false, "Write a debug message to the game console when the context menu for doors is displayed");
-
-            WriteMessagesWhenUnlockingDoors = Config.Bind("Logging", "Write messages when unlocking doors",
-                false, "Write a debug message to the game console when you use this mod to unlock a door");
-
-            WriteMessagesWhenTogglingSwitches = Config.Bind("Logging", "Write messages when toggling switches",
-                false, "Write a debug message to the game console when you toggle a switch");
+            DebugMessagesEnabled = Config.Bind("Main", "Enabled Debug Messages",
+                (EDebugMessagesEnabled)0, "Enabled debugging messages");
         }
     }
 }
