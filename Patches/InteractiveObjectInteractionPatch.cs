@@ -16,11 +16,11 @@ namespace SPTOpenSesame.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return InteractionHelpers.TargetType.GetMethod("smethod_3", BindingFlags.Public | BindingFlags.Static);
+            return InteractionHelpers.TargetType.GetMethod("smethod_5", BindingFlags.Public | BindingFlags.Static);
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(ref object __result, GamePlayerOwner owner, WorldInteractiveObject worldInteractiveObject)
+        protected static void PatchPostfix(ref object __result, GamePlayerOwner owner, WorldInteractiveObject worldInteractiveObject)
         {
             // Ignore interactions from bots
             if (InteractionHelpers.IsInteractorABot(owner))

@@ -15,11 +15,11 @@ namespace SPTOpenSesame.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return InteractionHelpers.TargetType.GetMethod("smethod_9", BindingFlags.Public | BindingFlags.Static);
+            return InteractionHelpers.TargetType.GetMethod("smethod_13", BindingFlags.Public | BindingFlags.Static);
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(ref object __result, GamePlayerOwner owner, KeycardDoor door, bool isProxy)
+        protected static void PatchPostfix(ref object __result, GamePlayerOwner owner, KeycardDoor door, bool isProxy)
         {
             // Ignore interactions from bots
             if (InteractionHelpers.IsInteractorABot(owner))

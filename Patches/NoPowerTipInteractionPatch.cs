@@ -15,11 +15,11 @@ namespace SPTOpenSesame.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return InteractionHelpers.TargetType.GetMethod("smethod_14", BindingFlags.Public | BindingFlags.Static);
+            return InteractionHelpers.TargetType.GetMethod("smethod_18", BindingFlags.Public | BindingFlags.Static);
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(ref object __result, NoPowerTip noPowerTip)
+        protected static void PatchPostfix(ref object __result, NoPowerTip noPowerTip)
         {
             if (!OpenSesamePlugin.FeaturesEnabled.Value.HasFlag(OpenSesamePlugin.EFeaturesEnabled.TurnOnPower))
             {

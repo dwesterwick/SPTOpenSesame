@@ -7,7 +7,7 @@ using BepInEx.Configuration;
 
 namespace SPTOpenSesame
 {
-    [BepInPlugin("com.DanW.OpenSesame", "DanW-OpenSesame", "2.4.1")]
+    [BepInPlugin("com.DanW.OpenSesame", "DanW-OpenSesame", "2.4.3")]
     public class OpenSesamePlugin : BaseUnityPlugin
     {
         public static string[] PowerSwitchIds = new string[]
@@ -41,7 +41,7 @@ namespace SPTOpenSesame
         public static ConfigEntry<EFeaturesEnabled> FeaturesEnabled;
         public static ConfigEntry<EDebugMessagesEnabled> DebugMessagesEnabled;
 
-        private void Awake()
+        protected void Awake()
         {
             Logger.LogInfo("Loading OpenSesame...");
 

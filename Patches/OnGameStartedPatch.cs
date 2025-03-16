@@ -18,7 +18,7 @@ namespace SPTOpenSesame.Patches
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(GameWorld __instance)
+        protected static void PatchPostfix(GameWorld __instance)
         {
             IEnumerable<Switch> powerSwitches = UnityEngine.Object
                 .FindObjectsOfType<Switch>()
