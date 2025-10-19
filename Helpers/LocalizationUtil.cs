@@ -154,12 +154,12 @@ namespace SPTOpenSesame.Helpers
                 // Check if translations can be added for the locale
                 if (!TryAddNewTranslationsForLocale(locale, existingTranslations))
                 {
-                    LoggingUtil.LogError("Could not new translations for locale \"" + locale + "\"");
+                    LoggingUtil.LogError("Could not load translations for locale \"" + locale + "\"");
                     continue;
                 }
 
                 updatedLocales.Add(locale);
-                LoggingUtil.LogInfo("Added new translations for locale \"" + locale + "\"");
+                LoggingUtil.LogInfo("Added translations for locale \"" + locale + "\"");
             }
         }
 
@@ -172,11 +172,11 @@ namespace SPTOpenSesame.Helpers
                 // If this is the default locale, there is no fall-back option, so throw an exception
                 if (locale == defaultLocale)
                 {
-                    throw new TypeLoadException("Cannot load new translations for default locale (\"" + locale + "\")");
+                    throw new TypeLoadException("Cannot load translations for default locale (\"" + locale + "\")");
                 }
 
                 // If a matching type cannot be found, load the one for English instead
-                LoggingUtil.LogError("Cannot get new translations for locale \"" + locale + "\". Trying to use translations for default locale (\"" + defaultLocale + "\") instead...");
+                LoggingUtil.LogWarning("Cannot find translations for locale \"" + locale + "\". Using translations for default locale (\"" + defaultLocale + "\") instead...");
                 return TryAddNewTranslationsForLocale(defaultLocale, existingTranslations);
             }
             
@@ -184,14 +184,14 @@ namespace SPTOpenSesame.Helpers
             Dictionary<string, string> newTranslations = GetNewTranslationsForLocale(locale, resType);
             if (newTranslations.Count == 0)
             {
-                LoggingUtil.LogWarning("No new translations to add for locale \"" + locale + "\"");
+                LoggingUtil.LogWarning("No translations to add for locale \"" + locale + "\"");
                 return false;
             }
 
             // Make sure translations don't already exist for the keys that will be added
             if (newTranslations.Any(x => existingTranslations.ContainsKey(x.Key)))
             {
-                LoggingUtil.LogError("Duplicate translations found for locale \"" + locale + "\". New translations will not be added.");
+                LoggingUtil.LogError("Duplicate translations found for locale \"" + locale + "\". Translations will not be added.");
                 return false;
             }
 
