@@ -14,9 +14,11 @@ namespace SPTOpenSesame.Helpers
 {
     public static class LocalizationHelpers
     {
-        private static List<string> updatedLocales = new List<string>();
-        private static string defaultLocale = "en";
+        private const string DEFAULT_LOCALE = "en";
+        private const string NEW_TRANSLATIONS_NAMESPACE = "SPTOpenSesame.Resources";
 
+        private static List<string> updatedLocales = new List<string>();
+        
         public static void AddNewTranslationsForLoadedLocales()
         {
             // Loop through all locales that EFT has loaded
@@ -54,14 +56,14 @@ namespace SPTOpenSesame.Helpers
             if (resType == null)
             {
                 // If this is the default locale, there is no fall-back option, so throw an exception
-                if (locale == defaultLocale)
+                if (locale == DEFAULT_LOCALE)
                 {
                     throw new TypeLoadException("Cannot load translations for default locale (\"" + locale + "\")");
                 }
 
                 // If a matching type cannot be found, load the one for English instead
-                Singleton<LoggingUtil>.Instance.LogWarning("Cannot find translations for locale \"" + locale + "\". Using translations for default locale (\"" + defaultLocale + "\") instead...");
-                return TryAddNewTranslationsForLocale(defaultLocale, existingTranslations);
+                Singleton<LoggingUtil>.Instance.LogWarning("Cannot find translations for locale \"" + locale + "\". Using translations for default locale (\"" + DEFAULT_LOCALE + "\") instead...");
+                return TryAddNewTranslationsForLocale(DEFAULT_LOCALE, existingTranslations);
             }
             
             // Get the translations that need to be added;
@@ -119,8 +121,7 @@ namespace SPTOpenSesame.Helpers
             // Dashes are automatically changed to underscores in resource file names
             string adjustedLocaleName = locale.Replace('-', '_');
 
-            string _namespace = "SPTOpenSesame.Resources";
-            string resName = _namespace + "." + adjustedLocaleName;
+            string resName = NEW_TRANSLATIONS_NAMESPACE + "." + adjustedLocaleName;
             Type resType = Type.GetType(resName);
 
             return resType;
