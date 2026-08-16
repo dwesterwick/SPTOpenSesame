@@ -82,6 +82,7 @@
     <Compile Include="Components\PowerSwitchIdentificationComponent.cs" />
     <Compile Include="Helpers\InteractionHelpers.cs" />
     <Compile Include="Helpers\LocalizationHelpers.cs" />
+    <Compile Include="Patches\SwitchInteractionPatch.cs" />
     <Compile Include="Patches\InteractiveObjectInteractionPatch.cs" />
     <Compile Include="Patches\KeycardDoorInteractionPatch.cs" />
     <Compile Include="Patches\NoPowerTipInteractionPatch.cs" />

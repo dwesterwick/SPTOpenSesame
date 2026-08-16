@@ -44,6 +44,7 @@ namespace SPTOpenSesame
             new Patches.InteractiveObjectInteractionPatch().Enable();
             new Patches.KeycardDoorInteractionPatch().Enable();
             new Patches.NoPowerTipInteractionPatch().Enable();
+            new Patches.SwitchInteractionPatch().Enable();
 
             addConfigOptions();
 

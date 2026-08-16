@@ -34,7 +34,7 @@ namespace SPTOpenSesame.Patches
             }
 
             // Try to add the "Turn On Power" action to the doors's context menu
-            InteractionHelpers.AddTurnOnPowerToActionList(__result);
+            InteractionHelpers.AddTurnOnPowerToActionList(ref __result);
         }
     }
 }

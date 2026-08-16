@@ -47,7 +47,7 @@ namespace SPTOpenSesame.Patches
             }
 
             // Try to add the "Open Sesame" action to the door's context menu
-            worldInteractiveObject.AddOpenSesameToActionList(__result, owner);
+            worldInteractiveObject.AddOpenSesameToActionList(ref __result, owner);
         }
     }
 }
