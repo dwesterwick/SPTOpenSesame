@@ -1,13 +1,15 @@
-﻿using System;
+﻿using EFT;
+using EFT.Interactive;
+using EFT.UI;
+using SPT.Reflection.Patching;
+using SPTOpenSesame.Helpers;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using SPT.Reflection.Patching;
-using EFT.Interactive;
-using SPTOpenSesame.Helpers;
 
 namespace SPTOpenSesame.Patches
 {
@@ -15,11 +17,16 @@ namespace SPTOpenSesame.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return InteractionHelpers.TargetType.GetMethod("smethod_18", BindingFlags.Public | BindingFlags.Static);
+            return typeof(InteractionContextHelper).GetMethod(
+                nameof(InteractionContextHelper.GetAvailableActions),
+                BindingFlags.Public | BindingFlags.Static,
+                null,
+                new Type[] { typeof(NoPowerTip) },
+                null);
         }
 
         [PatchPostfix]
-        protected static void PatchPostfix(ref object __result, NoPowerTip noPowerTip)
+        protected static void PatchPostfix(ref AvailableInteractionState __result, NoPowerTip noPowerTip)
         {
             if (!OpenSesamePlugin.FeaturesEnabled.Value.HasFlag(OpenSesamePlugin.EFeaturesEnabled.TurnOnPower))
             {
@@ -27,7 +34,7 @@ namespace SPTOpenSesame.Patches
             }
 
             // Try to add the "Turn On Power" action to the doors's context menu
-            OpenSesamePlugin.PowerSwitch.AddTurnOnPowerToActionList(__result);
+            InteractionHelpers.AddTurnOnPowerToActionList(ref __result);
         }
     }
 }

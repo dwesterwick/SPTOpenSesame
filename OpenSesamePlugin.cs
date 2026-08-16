@@ -1,23 +1,18 @@
-﻿using System;
+﻿using BepInEx;
+using BepInEx.Configuration;
+using Comfort.Common;
+using EFT;
+using SPTOpenSesame.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using BepInEx;
-using BepInEx.Configuration;
 
 namespace SPTOpenSesame
 {
-    [BepInPlugin("com.danw.opensesame", "DanW-OpenSesame", "2.5.0")]
+    [BepInPlugin("com.danw.opensesame", "DanW-OpenSesame", "3.0.0")]
     public class OpenSesamePlugin : BaseUnityPlugin
     {
-        public static string[] PowerSwitchIds = new string[]
-        {
-            "custom_DesignStuff_00034",
-            "Shopping_Mall_DesignStuff_00055"
-        };
-
-        public static EFT.Interactive.Switch PowerSwitch { get; set; } = null;
-
         [Flags]
         public enum EFeaturesEnabled
         {
@@ -44,25 +39,20 @@ namespace SPTOpenSesame
         protected void Awake()
         {
             Logger.LogInfo("Loading OpenSesame...");
+            Singleton<LoggingUtil>.Create(new LoggingUtil(Logger));
 
-            Helpers.LoggingUtil.Logger = Logger;
-
-            // Find types so we don't need to use GClasses
-            Helpers.InteractionHelpers.FindTypes();
-            Helpers.LocalizationUtil.FindTypes();
-
-            new Patches.OnGameStartedPatch().Enable();
-            new Patches.GameWorldOnDestroyPatch().Enable();
             new Patches.InteractiveObjectInteractionPatch().Enable();
             new Patches.KeycardDoorInteractionPatch().Enable();
             new Patches.NoPowerTipInteractionPatch().Enable();
+            new Patches.SwitchInteractionPatch().Enable();
 
             addConfigOptions();
 
             // Add a listener to automatically add translations when EFT first loads and when the user switches languages
-            Helpers.LocalizationUtil.AddLocaleUpdateListener(Helpers.LocalizationUtil.AddNewTranslationsForLoadedLocales);
+            Singleton<LoggingUtil>.Instance.LogInfo("Adding locale update listener...");
+            LocalizationManager.Instance.AddLocaleUpdateListener(Helpers.LocalizationHelpers.AddNewTranslationsForLoadedLocales);
 
-            Logger.LogInfo("Loading OpenSesame...done.");
+            Singleton<LoggingUtil>.Instance.LogInfo("Loading OpenSesame...done.");
         }
 
         private void addConfigOptions()
