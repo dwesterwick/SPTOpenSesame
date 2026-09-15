@@ -18,35 +18,78 @@ namespace SPTOpenSesame.Helpers
         private const string NEW_TRANSLATIONS_NAMESPACE = "SPTOpenSesame.Resources";
 
         private static List<string> updatedLocales = new List<string>();
-        
+
+        public static string[] GetAllLoadedLocales()
+        {
+            return LocalizationManager.Instance._locales.Keys
+                .ToArray();
+        }
+
+        public static string[] GetLocalesToUpdate()
+        {
+            return LocalizationManager.Instance._locales.Keys
+                .Where(locale => !updatedLocales.Contains(locale))
+                .ToArray();
+        }
+
+        private const int MAX_ATTEMPTS = 3;
         public static void AddNewTranslationsForLoadedLocales()
         {
-            // Loop through all locales that EFT has loaded
-            foreach ((string locale, Locale existingTranslations) in LocalizationManager.Instance._locales)
+            string[] missingLocales = GetLocalesToUpdate();
+
+            int attempts = 0;
+            while (missingLocales.Length > 0)
             {
-                // Skip locales for which translations have already been added
-                if (updatedLocales.Contains(locale))
+                attempts++;
+
+                // Loop through all locales that EFT has loaded
+                foreach (string loadedLocale in GetAllLoadedLocales())
                 {
-                    continue;
+                    UpdateTranslationsForLocale(loadedLocale);
                 }
 
-                // Get the existing translations for the locale
-                if (existingTranslations == null)
+                missingLocales = GetLocalesToUpdate();
+                if (missingLocales.Length == 0)
                 {
-                    Singleton<LoggingUtil>.Instance.LogError("Cannot load existing translations for locale \"" + locale + "\"");
-                    continue;
+                    break;
                 }
 
-                // Check if translations can be added for the locale
-                if (!TryAddNewTranslationsForLocale(locale, existingTranslations))
+                Singleton<LoggingUtil>.Instance.LogWarning("The following locales still need new translations: " + string.Join(", ", missingLocales));
+
+                if (attempts >= MAX_ATTEMPTS)
                 {
-                    Singleton<LoggingUtil>.Instance.LogError("Could not load translations for locale \"" + locale + "\"");
-                    continue;
+                    Singleton<LoggingUtil>.Instance.LogError("Could not add translations for all locales");
+                    break;
                 }
 
-                updatedLocales.Add(locale);
-                Singleton<LoggingUtil>.Instance.LogDebug("Added translations for locale \"" + locale + "\"");
+                Singleton<LoggingUtil>.Instance.LogWarning("Trying again...");
             }
+        }
+
+        public static void UpdateTranslationsForLocale(string locale)
+        {
+            // Skip locales for which translations have already been added
+            if (updatedLocales.Contains(locale))
+            {
+                return;
+            }
+
+            // Get the existing translations for the locale
+            if (LocalizationManager.Instance._locales[locale] == null)
+            {
+                Singleton<LoggingUtil>.Instance.LogError("Cannot load existing translations for locale \"" + locale + "\"");
+                return;
+            }
+
+            // Check if translations can be added for the locale
+            if (!TryAddNewTranslationsForLocale(locale, LocalizationManager.Instance._locales[locale]))
+            {
+                Singleton<LoggingUtil>.Instance.LogError("Could not load translations for locale \"" + locale + "\"");
+                return;
+            }
+
+            updatedLocales.Add(locale);
+            Singleton<LoggingUtil>.Instance.LogDebug("Added translations for locale \"" + locale + "\"");
         }
 
         public static bool TryAddNewTranslationsForLocale(string locale, Locale existingTranslations)
